@@ -26,7 +26,7 @@ namespace Moneybox.App.Features
             //so in the end I would actually implement a common validation setup with fluent validation to avoid that, or another strategy to avoid code validation duplications.
             if (from == null || to == null) throw new InvalidOperationException($" The user with account id {fromAccountId} does not exist.");
 
-            //If at any point any of these operations fails an exception is thrown and the changes are safely discarded.
+            //If at any point any of these operations fails an exception is thrown and the changes to the entities are safely discarded.
             //But usually this would be wrapped within a unit of work.
             from.TryWithdrawn(amount);
             to.TryTransfer(amount);  

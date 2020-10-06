@@ -32,9 +32,9 @@ namespace Moneybox.App
         { 
             if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive.");
 
-            this.SetBalance(OperationType.Subtract, amount);
+            SetBalance(OperationType.Subtract, amount);
 
-            this.Withdrawn -= amount;
+            Withdrawn -= amount;
         } 
 
         public void TryTransfer(decimal amount)
@@ -52,7 +52,7 @@ namespace Moneybox.App
             //We could create a domain event with the help of a mediator to notify about this particular state and in a later stage
             //decide if he wanted to send the notification or not. I decided to do this in the feature layer because of time constraints.
 
-            this.SetBalance(OperationType.Sum, amount);
+            SetBalance(OperationType.Sum, amount);
         } 
 
         private void SetBalance(OperationType operation, decimal amount)
@@ -76,8 +76,7 @@ namespace Moneybox.App
 
             //LOW FUNDS THRESHOLD
             //We could create a domain event with the help of a mediator to notify about this particular state and in a later stage
-            //decide if he wanted to send the notification or not. I decided to do this in the feature layer because of time constraints.
-          
+            //decide if he wanted to send the notification or not. I decided to do this in the feature layer because of time constraints. 
         }
 
         public void SetCurrentPaidIn(decimal amount)
