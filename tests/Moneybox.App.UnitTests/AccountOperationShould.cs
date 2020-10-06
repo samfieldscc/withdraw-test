@@ -1,12 +1,13 @@
 ﻿using Xunit; 
 using System;
+using Moneybox.App.Domain;
 
 namespace Moneybox.App.UnitTests
 { 
     public class AccountOperationShould
     { 
         [Fact]
-        public void ThrowAnExceptionForNegativeAmmountInWithdrawn()
+        public void ThrowAnExceptionForNegativeAmountInWithdrawn()
         {
             var account = new Account(1000m, 0m, 0m);
 
@@ -14,7 +15,7 @@ namespace Moneybox.App.UnitTests
         }
 
         [Fact]
-        public void ThrowAnExceptionForInsuficientFundsInWithdrawn()
+        public void ThrowAnExceptionForInsufficientFundsInWithdrawn()
         {
             var account = new Account(1000m, 0m, 0m);
 
@@ -22,7 +23,7 @@ namespace Moneybox.App.UnitTests
         }
 
         [Fact]
-        public void ThrowAnExceptionForNegativeAmmountInTransfer()
+        public void ThrowAnExceptionForNegativeAmountInTransfer()
         {
             var account = new Account(1000m, 0m, 0m);
 
@@ -30,7 +31,7 @@ namespace Moneybox.App.UnitTests
         } 
 
         [Fact]
-        public void ExecuteWidthdrawCorrectly()
+        public void ExecuteWithdrawnCorrectly()
         {
             var account = new Account(1000m, 0m, 0m);
 

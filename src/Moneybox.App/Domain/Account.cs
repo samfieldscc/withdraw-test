@@ -1,6 +1,7 @@
 ﻿using System;
 
-namespace Moneybox.App
+//Fixed the namespace to be consistent with folder distribution
+namespace Moneybox.App.Domain
 {
     public class Account
     {
@@ -30,7 +31,7 @@ namespace Moneybox.App
        
         public void TryWithdrawn(decimal amount)
         { 
-            if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive.");
+            if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
 
             SetBalance(OperationType.Subtract, amount);
 
@@ -39,7 +40,7 @@ namespace Moneybox.App
 
         public void TryTransfer(decimal amount)
         {
-            if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive.");
+            if (amount < 0) throw new ArgumentOutOfRangeException(nameof(amount));
 
             PaidIn += amount;
 
@@ -71,17 +72,12 @@ namespace Moneybox.App
 
             if (Balance < 0m)
             {
-                throw new InvalidOperationException("Insufficient funds to make widthdrawn.");
+                throw new InvalidOperationException("Insufficient funds to make withdrawn.");
             }
 
             //LOW FUNDS THRESHOLD
             //We could create a domain event with the help of a mediator to notify about this particular state and in a later stage
             //decide if he wanted to send the notification or not. I decided to do this in the feature layer because of time constraints. 
-        }
-
-        public void SetCurrentPaidIn(decimal amount)
-        {
-            PaidIn = amount;
-        }
+        } 
     }
 }

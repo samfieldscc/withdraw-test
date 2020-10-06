@@ -1,4 +1,4 @@
-﻿namespace Moneybox.App
+﻿namespace Moneybox.App.Domain
 {
     public enum OperationType
     {
