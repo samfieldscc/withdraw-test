@@ -12,8 +12,8 @@ namespace Moneybox.App.Features
 
         public TransferMoney(IAccountRepository accountRepository, INotificationService notificationService)
         {
-            this.accountRepository = accountRepository;
-            this.notificationService = notificationService;
+            this.accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
         public void Execute(Guid fromAccountId, Guid toAccountId, decimal amount)
@@ -21,10 +21,9 @@ namespace Moneybox.App.Features
             var from = this.accountRepository.GetAccountById(fromAccountId);
             var to = this.accountRepository.GetAccountById(toAccountId);
 
-            //These kinds of validations could be wrapped using FluentValidation, but for simplicity because its only two validations I decided to do it in here.
-            //That being said, although it's only two validation we can already see code duplication in the other feature, which could go against clean code practices,
+            //These kinds of validations could be wrapped using FluentValidation, but for simplicity because its only one validation I decided to do it in here.
+            //That being said, although it's only one validation we can already see code duplication in the other feature, which could go against clean code practices,
             //so in the end I would actually implement a common validation setup with fluent validation to avoid that, or another strategy to avoid code validation duplications.
-            if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive."); 
             if (from == null || to == null) throw new InvalidOperationException($" The user with account id {fromAccountId} does not exist.");
 
             //If at any point any of these operations fails an exception is thrown and the changes are safely discarded.

@@ -21,16 +21,26 @@ namespace Moneybox.App
         //The object should be the only one to update the property. This ensures proper implementation of bussiness/domain logic
         public decimal PaidIn { get; private set; }
 
+        public Account(decimal balance, decimal withdrawn, decimal paidIn)
+        {
+            Balance = balance;
+            Withdrawn = withdrawn;
+            PaidIn = paidIn;
+        }
        
         public void TryWithdrawn(decimal amount)
         { 
+            if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive.");
+
             this.SetBalance(OperationType.Subtract, amount);
 
             this.Withdrawn -= amount;
         } 
 
         public void TryTransfer(decimal amount)
-        { 
+        {
+            if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive.");
+
             PaidIn += amount;
 
             if (PaidIn > Account.PayInLimit)
@@ -68,6 +78,11 @@ namespace Moneybox.App
             //We could create a domain event with the help of a mediator to notify about this particular state and in a later stage
             //decide if he wanted to send the notification or not. I decided to do this in the feature layer because of time constraints.
           
+        }
+
+        public void SetCurrentPaidIn(decimal amount)
+        {
+            PaidIn = amount;
         }
     }
 }

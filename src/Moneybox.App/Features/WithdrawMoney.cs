@@ -12,8 +12,8 @@ namespace Moneybox.App.Features
 
         public WithdrawMoney(IAccountRepository accountRepository, INotificationService notificationService)
         {
-            this.accountRepository = accountRepository;
-            this.notificationService = notificationService;
+            this.accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            this.notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
         }
 
         public void Execute(Guid fromAccountId, decimal amount)
