@@ -1,5 +1,6 @@
 ﻿using Moneybox.App.DataAccess;
 using Moneybox.App.Domain.Services;
+using Moneybox.App.Features.Common;
 using System;
 
 namespace Moneybox.App.Features
@@ -20,36 +21,26 @@ namespace Moneybox.App.Features
             var from = this.accountRepository.GetAccountById(fromAccountId);
             var to = this.accountRepository.GetAccountById(toAccountId);
 
-            var fromBalance = from.Balance - amount;
-            if (fromBalance < 0m)
-            {
-                throw new InvalidOperationException("Insufficient funds to make transfer");
-            }
+            //These kinds of validations could be wrapped using FluentValidation, but for simplicity because its only two validations I decided to do it in here.
+            //That being said, although it's only two validation we can already see code duplication in the other feature, which could go against clean code practices,
+            //so in the end I would actually implement a common validation setup with fluent validation to avoid that, or another strategy to avoid code validation duplications.
+            if (amount < 0) throw new ArgumentOutOfRangeException("The amount must be positive."); 
+            if (from == null || to == null) throw new InvalidOperationException($" The user with account id {fromAccountId} does not exist.");
 
-            if (fromBalance < 500m)
-            {
-                this.notificationService.NotifyFundsLow(from.User.Email);
-            }
-
-            var paidIn = to.PaidIn + amount;
-            if (paidIn > Account.PayInLimit)
-            {
-                throw new InvalidOperationException("Account pay in limit reached");
-            }
-
-            if (Account.PayInLimit - paidIn < 500m)
-            {
-                this.notificationService.NotifyApproachingPayInLimit(to.User.Email);
-            }
-
-            from.Balance = from.Balance - amount;
-            from.Withdrawn = from.Withdrawn - amount;
-
-            to.Balance = to.Balance + amount;
-            to.PaidIn = to.PaidIn + amount;
-
+            //If at any point any of these operations fails an exception is thrown and the changes are safely discarded.
+            //But usually this would be wrapped within a unit of work.
+            from.TryWithdrawn(amount);
+            to.TryTransfer(amount);  
+             
             this.accountRepository.Update(from);
             this.accountRepository.Update(to);
+
+            //Notifications are only sent after we can confirm that the transactions happened successfully.
+            //As explain in the account class, the prefered option, in my opinion, is to have a domain event dispatch this action using a mediator from inside the domain object.
+            //Whatever strategy used the key point is to avoid adding any dependencies inside the domain object unless otherwise advised by the team.
+            NotificationThresholds.SendIfLowFunds(notificationService, from);
+            NotificationThresholds.SendIfLowFunds(notificationService, to);
+            NotificationThresholds.SendIfNearPaidInLimit(notificationService, to);
         }
     }
 }
